@@ -19,28 +19,44 @@ const Appointment = () => {
   const [slotIndex, setSlotIndex] = useState(0)
   const [slotTime, setSlotTime] = useState('')
 
+  // ================= NEW CHANGE =================
+  // State to store mentor announcements
+  const [announcements, setAnnouncements] = useState([]);
+  // =================================================
+
   const fetchMentorInfo = async () => {
     const mentorInfo = mentors.find(mentor => mentor._id === mentorId)
     setMentorInfo(mentorInfo)
   }
 
+  // Fetch mentor announcements from backend
+  const getAnnouncements = async () => {
+    try {
+      const { data } = await axios.get(
+        backendURL + `/api/user/mentor-announcements/${mentorId}`
+      );
+
+      if (data.success) {
+        setAnnouncements(data.announcements);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getAvailableSlots = async () => {
     setMentorSlots([])
 
-    // getting current date
     let today = new Date()
 
     for (let i = 0; i < 7; i++) {
-      // getting date with index
       let currentDate = new Date(today)
       currentDate.setDate(today.getDate() + i)
 
-      // setting end time of the date with index
       let endTime = new Date()
       endTime.setDate(today.getDate() + i)
       endTime.setHours(21, 0, 0, 0)
 
-      // setting hours
       if (today.getDate() === currentDate.getDate()) {
         currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10)
         currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0)
@@ -64,27 +80,22 @@ const Appointment = () => {
         const isSlotAvailable = mentorInfo.slots_booked[slotDate] && mentorInfo.slots_booked[slotDate].includes(slotTime) ? false : true
 
         if (isSlotAvailable) {
-          // add slot to array
           timeSlots.push({
             datetime: new Date(currentDate),
             time: formattedTime
           })
         }
 
-        // Increment current time by 30 minutes
         currentDate.setMinutes(currentDate.getMinutes() + 30);
-
       }
       setMentorSlots(prev => ([...prev, timeSlots]))
-
     }
-
   }
-
 
   const bookAppointment = async () => {
 
     console.log("BOOK APPOINTMENT FUNCTION CALLED");
+
     if (!token) {
       toast.warn('Login to book appointment')
       return navigate('/login')
@@ -104,7 +115,6 @@ const Appointment = () => {
 
       const slotDate = day + "_" + month + "_" + year
 
-      // 1️⃣ Create Razorpay Order FIRST
       const { data } = await axios.post(
         backendURL + '/api/user/payment-razorpay',
         { mentorId },
@@ -117,7 +127,6 @@ const Appointment = () => {
       }
 
       const order = data.order
-      
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -129,7 +138,6 @@ const Appointment = () => {
 
         handler: async function (response) {
           try {
-            // 2️⃣ Payment success → now book appointment
             const bookRes = await axios.post(
               backendURL + '/api/user/book-appointment',
               { mentorId, slotDate, slotTime },
@@ -165,18 +173,24 @@ const Appointment = () => {
   }, [mentors, mentorId])
 
   useEffect(() => {
-    getAvailableSlots();
+    if (mentorInfo) {
+      getAvailableSlots();
+    }
   }, [mentorInfo])
 
+  // ================= NEW CHANGE =================
+  // Call announcement API when mentorId changes
   useEffect(() => {
-    console.log(mentorSlots)
-  }, [mentorSlots])
+    if (mentorId) {
+      getAnnouncements();
+    }
+  }, [mentorId]);
+  // =================================================
 
   return mentorInfo && (
     <div className='px-4 sm:px-8 md:px-12'>
       {/* Mentor Details */}
       <div className='flex flex-col sm:flex-row gap-6'>
-        {/* Image */}
         <div className="sm:max-w-96">
           <img
             className="bg-[#5f6FFF] w-full h-[420px] object-cover rounded-2xl shadow-lg"
@@ -185,15 +199,12 @@ const Appointment = () => {
           />
         </div>
 
-        {/* Info Card */}
         <div className='flex-1 border border-gray-200 rounded-xl p-8 bg-white shadow-sm'>
-          {/* Name */}
           <p className='flex items-center gap-2 text-3xl font-semibold text-gray-900'>
             {mentorInfo.name}
             <img className='w-6' src={assets.verified_icon} alt="" />
           </p>
 
-          {/* Degree & Speciality */}
           <div className='flex flex-wrap items-center gap-3 text-base mt-2 text-gray-600'>
             <p className='font-medium'>{mentorInfo.degree} - {mentorInfo.speciality}</p>
             <button className='py-1 px-3 border text-xs rounded-full bg-gray-50'>
@@ -201,7 +212,6 @@ const Appointment = () => {
             </button>
           </div>
 
-          {/* About */}
           <div className='mt-4'>
             <p className='flex items-center gap-1 text-lg font-semibold text-gray-900'>
               About <img src={assets.info_icon} alt="" />
@@ -211,13 +221,32 @@ const Appointment = () => {
             </p>
           </div>
 
-          {/* Fees */}
           <p className='text-lg font-semibold text-gray-800 mt-6'>
             Counselling Fee:
             <span className='ml-2 text-xl text-[#5f6FFF]'>
               {currencySymbol} {mentorInfo.fees}
             </span>
           </p>
+
+          {/* Mentor Announcements Display */}
+          {announcements.length > 0 && (
+            <div className="mt-6 bg-yellow-50 border border-yellow-300 rounded-xl p-4">
+              <p className="font-semibold text-yellow-700 mb-2">
+                🎉 Special Announcements
+              </p>
+
+              {announcements.map((item, index) => (
+                <div key={index} className="mb-2">
+                  <p className="font-medium text-gray-800">
+                    {item.title}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    {item.message}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -225,14 +254,13 @@ const Appointment = () => {
       <div className='sm:ml-72 sm:pl-6 mt-10'>
         <p className='text-2xl font-semibold text-gray-800'>Booking Slots</p>
 
-        {/* Days */}
         <div className='flex gap-4 items-center w-full overflow-x-auto mt-5 pb-2'>
           {mentorSlots.length && mentorSlots.map((item, index) => (
             <div
               key={index}
               onClick={() => setSlotIndex(index)}
               className={`text-center py-5 min-w-20 rounded-xl cursor-pointer transition-all duration-300
-            ${slotIndex === index ? 'bg-[#5f6FFF] text-white shadow-md' : 'border border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+              ${slotIndex === index ? 'bg-[#5f6FFF] text-white shadow-md' : 'border border-gray-300 text-gray-700 hover:bg-gray-100'}`}
             >
               <p className='text-sm font-medium'>
                 {item[0] && daysOfWeek[item[0].datetime.getDay()]}
@@ -244,23 +272,21 @@ const Appointment = () => {
           ))}
         </div>
 
-        {/* Time Slots */}
         <div className='flex items-center gap-3 w-full overflow-x-auto mt-6 pb-2'>
           {mentorSlots.length && mentorSlots[slotIndex].map((item, index) => (
             <p
               key={index}
               onClick={() => setSlotTime(item.time)}
               className={`flex-shrink-0 px-6 py-2 rounded-full cursor-pointer text-sm font-medium transition-all duration-200
-            ${item.time === slotTime
-                  ? 'bg-[#5f6FFF] text-white shadow'
-                  : 'text-gray-600 border border-gray-300 hover:bg-gray-100'}`}
+              ${item.time === slotTime
+                ? 'bg-[#5f6FFF] text-white shadow'
+                : 'text-gray-600 border border-gray-300 hover:bg-gray-100'}`}
             >
               {item.time.toLowerCase()}
             </p>
           ))}
         </div>
 
-        {/* Button */}
         <button
           onClick={bookAppointment}
           className='bg-[#5f6FFF] hover:bg-[#4b57e0] transition-all text-white font-semibold cursor-pointer text-lg px-10 py-3 rounded-full mt-8 shadow-md'
@@ -269,7 +295,6 @@ const Appointment = () => {
         </button>
       </div>
 
-      {/* Related Mentors */}
       <div className='mt-12'>
         <RelatedMentors mentorId={mentorId} speciality={mentorInfo.speciality} />
       </div>
