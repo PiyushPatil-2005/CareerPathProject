@@ -7,6 +7,10 @@
   font-family: Outfit;
 }
 
+body {
+  background-color: #F5F7FF;
+}
+
 .active hr {
   display: block !important;
 }
