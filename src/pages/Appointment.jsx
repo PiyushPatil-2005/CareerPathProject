@@ -139,7 +139,7 @@ const Appointment = () => {
       const order = data.order
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_SZtkmm8mq8fjPa",
         amount: order.amount,
         currency: order.currency,
         name:'Mentorship Session Payment',
@@ -147,9 +147,7 @@ const Appointment = () => {
         order_id:order.id,
 
         handler: async function(){
-
           try {
-
             const bookRes = await axios.post(
               backendURL+'/api/user/book-appointment',
               {
@@ -175,8 +173,16 @@ const Appointment = () => {
           }
         }
       }
+      
+      console.log("-> RAZORPAY DEBUG OPTIONS:", { ...options, key: options.key ? "KEY_EXISTS" : "MISSING_KEY" })
 
       const rzp = new window.Razorpay(options)
+      
+      rzp.on('payment.failed', function (response){
+        console.error("-> RAZORPAY PAYMENT FAILED EVENT:", response.error);
+        toast.error("Razorpay Error: " + response.error.description);
+      });
+      
       rzp.open()
 
     } catch (error) {
