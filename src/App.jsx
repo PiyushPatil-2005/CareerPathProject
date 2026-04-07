@@ -16,7 +16,7 @@ import 'react-toastify/dist/ReactToastify.css'
 const App = () => {
   return (
     
-    <div className='mx-4 sm:mx-[10%]'>
+    <div className='max-w-7xl mx-auto sm:px-10 px-4'>
       <ToastContainer />
       <Navbar />
       <Routes>

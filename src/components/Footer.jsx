@@ -10,7 +10,7 @@ const Footer = () => {
 
         <div>
           <img className='mb-5 w-40' src={assets.logo} alt="" />
-          <p className='w-full md:w-2/3 text-gray-600 leading-6'>Career Path – Learn • Share • Grow. <br /> 
+          <p className='w-full md:w-2/3 text-slate-400 leading-6'>Career Path – Learn • Share • Grow. <br /> 
               Empowering the next generation of students <br /> and communities.  
               Join us in shaping the future.  
            </p>
@@ -19,8 +19,8 @@ const Footer = () => {
         {/* { Center Section } */}
 
         <div>
-          <p className='text-xl font-medium mb-5'>COMPANY</p>
-          <ul className='flex flex-col gap-2 text-gray-600'>
+          <p className='text-xl font-medium mb-5 text-white'>COMPANY</p>
+          <ul className='flex flex-col gap-2 text-slate-400'>
             <li>Home</li>
             <li>About</li>
             <li>Contact Us</li>
@@ -31,8 +31,8 @@ const Footer = () => {
         {/* { Right Section } */}
 
         <div>
-          <p className='text-xl font-medium mb-5'>GET IN TOUCH</p>
-          <ul className='flex flex-col gap-2 text-gray-600'>
+          <p className='text-xl font-medium mb-5 text-white'>GET IN TOUCH</p>
+          <ul className='flex flex-col gap-2 text-slate-400'>
             <li>+91 6739506032</li>
             <li>careerpath@gmail.com</li>
           </ul>
@@ -40,8 +40,8 @@ const Footer = () => {
       </div>
       {/* { Copy right text } */}
       <div>
-        <hr />
-        <p className='py-5 text-center'>Copyright 2025@ Career Path - All Right Reserved</p>
+        <hr className='border-white/10' />
+        <p className='py-5 text-center text-slate-400'>Copyright 2025@ Career Path - All Right Reserved</p>
       </div>
     </div>
   )

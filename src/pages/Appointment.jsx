@@ -213,39 +213,39 @@ const Appointment = () => {
 
         <div className="sm:max-w-96">
           <img
-            className="bg-[#5f6FFF] w-full h-[420px] object-cover rounded-2xl shadow-lg"
+            className="bg-indigo-100 w-full h-[420px] object-cover rounded-3xl shadow-xl shadow-indigo-100/50 transition-transform duration-500 hover:scale-[1.02]"
             src={mentorInfo.image}
             alt={mentorInfo.name}
           />
         </div>
 
-        <div className='flex-1 border border-gray-200 rounded-xl p-8 bg-white shadow-sm'>
+        <div className='glass-card flex-1 rounded-[2rem] p-8 lg:p-10 relative'>
 
-          <p className='flex items-center gap-2 text-3xl font-semibold text-gray-900'>
+          <p className='flex items-center gap-3 text-3xl md:text-4xl font-bold text-white glow-text'>
             {mentorInfo.name}
-            <img className='w-6' src={assets.verified_icon} alt="" />
+            <img className='w-6 md:w-8' src={assets.verified_icon} alt="" />
           </p>
 
-          <div className='flex flex-wrap items-center gap-3 text-base mt-2 text-gray-600'>
-            <p className='font-medium'>{mentorInfo.degree} - {mentorInfo.speciality}</p>
-            <button className='py-1 px-3 border text-xs rounded-full bg-gray-50'>
+          <div className='flex flex-wrap items-center gap-3 text-base mt-2 text-slate-300'>
+            <p className='font-medium'>{mentorInfo.degree} - <span className='text-indigo-400'>{mentorInfo.speciality}</span></p>
+            <button className='py-1 px-4 border border-white/10 shadow-inner text-xs rounded-full bg-white/5'>
               {mentorInfo.collegeName}
             </button>
           </div>
 
-          <div className='mt-4'>
-            <p className='flex items-center gap-1 text-lg font-semibold text-gray-900'>
-              About <img src={assets.info_icon} alt="" />
+          <div className='mt-8 pt-6 border-t border-white/10'>
+            <p className='flex items-center gap-2 text-xl font-bold text-white'>
+              About <img className='invert opacity-70' src={assets.info_icon} alt="" />
             </p>
-            <p className='text-base text-gray-600 max-w-[700px] mt-2 leading-relaxed'>
+            <p className='text-base text-slate-400 max-w-[700px] mt-3 leading-relaxed'>
               {mentorInfo.about}
             </p>
           </div>
 
           {/* Session Selection */}
 
-          <div className='mt-6'>
-            <p className='text-lg font-semibold text-gray-800 mb-2'>
+          <div className='mt-8 pt-6 border-t border-white/10'>
+            <p className='text-xl font-bold text-white mb-4'>
               Choose Session Type
             </p>
 
@@ -257,8 +257,8 @@ const Appointment = () => {
                   onClick={()=>setSelectedSession(session)}
                   className={`px-4 py-2 rounded-full border text-sm font-medium transition
                   ${selectedSession?.name===session.name
-                    ? 'bg-[#5f6FFF] text-white'
-                    : 'border-gray-300 text-gray-700 hover:bg-gray-100'
+                    ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.4)] scale-105 border-indigo-500'
+                    : 'border-white/10 text-slate-400 hover:bg-white/5 hover:text-white'
                   }`}
                 >
                   {session.name}
@@ -268,9 +268,9 @@ const Appointment = () => {
             </div>
 
             {selectedSession && (
-              <p className='text-lg font-semibold text-gray-800 mt-4'>
+              <p className='text-lg font-bold text-slate-300 mt-6'>
                 Session Fee:
-                <span className='ml-2 text-xl text-[#5f6FFF]'>
+                <span className='ml-2 text-2xl text-emerald-400 glow-text'>
                   {currencySymbol} {selectedSession.fee}
                 </span>
               </p>
@@ -280,15 +280,15 @@ const Appointment = () => {
           {/* Announcements */}
 
           {announcements.length>0 && (
-            <div className="mt-6 bg-yellow-50 border border-yellow-300 rounded-xl p-4">
-              <p className="font-semibold text-yellow-700 mb-2">
+            <div className="mt-8 bg-amber-900/20 border border-amber-500/30 rounded-2xl p-6 shadow-[0_0_30px_rgba(217,119,6,0.1)]">
+              <p className="font-bold text-amber-400 mb-4 text-lg">
                 🎉 Special Announcements
               </p>
 
               {announcements.map((item,index)=>(
-                <div key={index} className="mb-2">
-                  <p className="font-medium text-gray-800">{item.title}</p>
-                  <p className="text-sm text-gray-600">{item.message}</p>
+                <div key={index} className="mb-3 last:mb-0 bg-black/20 p-4 rounded-xl border border-white/5">
+                  <p className="font-semibold text-white">{item.title}</p>
+                  <p className="text-sm text-slate-400 mt-1">{item.message}</p>
                 </div>
               ))}
             </div>
@@ -301,7 +301,7 @@ const Appointment = () => {
 
       <div className='sm:ml-72 sm:pl-6 mt-10'>
 
-        <p className='text-2xl font-semibold text-gray-800'>
+        <p className='text-2xl font-bold text-white glow-text'>
           Booking Slots
         </p>
 
@@ -313,15 +313,15 @@ const Appointment = () => {
               onClick={()=>setSlotIndex(index)}
               className={`text-center py-5 min-w-20 rounded-xl cursor-pointer transition-all duration-300
               ${slotIndex===index
-                ? 'bg-[#5f6FFF] text-white shadow-md'
-                : 'border border-gray-300 text-gray-700 hover:bg-gray-100'
+                ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.5)] scale-105 border-indigo-500'
+                : 'border border-white/10 text-slate-400 hover:bg-white/5 hover:text-white'
               }`}
             >
-              <p className='text-sm font-medium'>
+              <p className='text-xs font-bold opacity-80 uppercase tracking-widest mb-1'>
                 {item[0] && daysOfWeek[item[0].datetime.getDay()]}
               </p>
 
-              <p className='text-lg font-semibold'>
+              <p className='text-2xl font-bold'>
                 {item[0] && item[0].datetime.getDate()}
               </p>
             </div>
@@ -337,8 +337,8 @@ const Appointment = () => {
               onClick={()=>setSlotTime(item.time)}
               className={`flex-shrink-0 px-6 py-2 rounded-full cursor-pointer text-sm font-medium transition-all duration-200
               ${item.time===slotTime
-                ? 'bg-[#5f6FFF] text-white shadow'
-                : 'text-gray-600 border border-gray-300 hover:bg-gray-100'
+                ? 'bg-indigo-600 text-white shadow-[0_0_15px_rgba(79,70,229,0.5)] scale-105 border-indigo-500'
+                : 'text-slate-400 border border-white/10 hover:bg-white/5 hover:text-white'
               }`}
             >
               {item.time.toLowerCase()}
@@ -349,7 +349,7 @@ const Appointment = () => {
 
         <button
           onClick={bookAppointment}
-          className='bg-[#5f6FFF] hover:bg-[#4b57e0] transition-all text-white font-semibold cursor-pointer text-lg px-10 py-3 rounded-full mt-8 shadow-md'
+          className='bg-indigo-600 hover:bg-indigo-500 transition-all duration-300 text-white font-bold cursor-pointer text-lg px-10 py-4.5 rounded-full mt-8 shadow-[0_0_20px_rgba(79,70,229,0.4)] hover:shadow-[0_0_30px_rgba(79,70,229,0.6)] hover:-translate-y-1 w-full sm:w-auto'
         >
           Book a Mentorship Session
         </button>
