@@ -23,6 +23,12 @@ const Login = () => {
     try {
 
       if(state === 'Sign Up') {
+        if (name.trim().length < 3) {
+          return toast.error("Name must be at least 3 characters long");
+        }
+        if (password.length < 8) {
+          return toast.error("Password must be at least 8 characters long");
+        }
         const { data } = await axios.post( backendURL + '/api/user/register', { name, password, email} )
         if(data.success) {
           localStorage.setItem('token', data.token)
@@ -62,7 +68,7 @@ const Login = () => {
           {
             state === "Sign Up" && <div className='w-full'>
               <p>Full Name</p>
-              <input className='bg-slate-900/50 border border-white/10 text-white rounded-xl w-full p-3 mt-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600' type="text" onChange={(e)=> setName(e.target.value)} value={name} required />
+              <input className='bg-slate-900/50 border border-white/10 text-white rounded-xl w-full p-3 mt-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600' type="text" onChange={(e)=> setName(e.target.value)} value={name} minLength="3" maxLength="50" required />
             </div>
           }
           <div className='w-full'>
@@ -71,7 +77,7 @@ const Login = () => {
           </div>
           <div className='w-full'>
             <p>Password</p>
-            <input className='bg-slate-900/50 border border-white/10 text-white rounded-xl w-full p-3 mt-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600' type="password" onChange={(e)=> setPassword(e.target.value)} value={password} required />
+            <input className='bg-slate-900/50 border border-white/10 text-white rounded-xl w-full p-3 mt-1 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-600' type="password" onChange={(e)=> setPassword(e.target.value)} value={password} minLength={state === 'Sign Up' ? "8" : undefined} required />
           </div>
           <button type='submit' className='bg-indigo-600 hover:bg-indigo-500 hover:shadow-[0_0_20px_rgba(79,70,229,0.5)] transition-all text-white font-bold w-full py-4 rounded-full mt-2 text-base cursor-pointer'>{ state === 'Sign Up' ? "Create Account" : "Login" }</button>
           {
